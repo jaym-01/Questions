@@ -10,7 +10,7 @@ public:
         vector<int> tmp;
 
         for(int j = 0; j < grid[0].size(); j++){
-            tmp.push_back(0);
+            tmp.push_back(-1);
         }
 
         for(int i = 0; i < grid.size(); i++){
@@ -24,21 +24,22 @@ public:
     int traverse(int x, int y, vector<vector<int>>& grid, vector<vector<int>>& mem){
         if(x < grid[0].size() && x > -1 && y < grid.size() && y > -1){
 
-            if(mem[y][x] != 0){
+            if(mem[y][x] != -1){
                 return mem[y][x];
             }
 
             int right = traverse(x+1, y, grid, mem);
             int down = traverse(x, y + 1, grid, mem);
 
-            if(right == 0 && down == 0){
+            if(right == -1 && down == -1){
+                mem[y][x] = grid[y][x];
                 return grid[y][x];
             }
-            else if(right == 0){
+            else if(right == -1){
                 mem[y][x] = grid[y][x] + down;
                 return grid[y][x] + down;
             }
-            else if(down == 0){
+            else if(down == -1){
                 mem[y][x] = grid[y][x] + right;
                 return grid[y][x] + right;
             }
@@ -53,7 +54,7 @@ public:
         }
 
         else{
-            return 0;
+            return -1;
         }
     }
 };
