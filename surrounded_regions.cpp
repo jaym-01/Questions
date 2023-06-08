@@ -1,92 +1,96 @@
-#include <vector>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
 class Solution {
 public:
     void solve(vector<vector<char>>& board) {
-        for(int i = 0; i < board[0].size(); i++){
+        outer_edge_check(board, 'O', '1');
+
+        inner_region_capture(board);
+
+        outer_edge_check(board, '1', 'O');
+    }
+
+private:
+
+    void change_region(vector<vector<char>>& board, char og_val, char new_val, int i, int j){
+        if(board[j][i] == og_val){
+            board[j][i] = new_val;
+
+            //check right -> down -> left -> up
+            if(i < board[0].size() - 1){
+                change_region(board, og_val, new_val, i + 1, j);
+            }
+            if(j < board.size() - 1){
+                change_region(board, og_val, new_val, i, j + 1);
+            }
+            if(i > 0){
+                change_region(board, og_val, new_val, i - 1, j);
+            }
+            if(j > 0){
+                change_region(board, og_val, new_val, i, j - 1);
+            }
+        }
+
+        return;
+    }
+
+    void outer_edge_check(vector<vector<char>>& board, char og_val, char new_val){
+        for(int i = 0; i < board[0].size(); i += board[0].size() - 1){
             for(int j = 0; j < board.size(); j++){
-                check_0(board, i, j);
+                if(board[j][i] == og_val){
+                    change_region(board, og_val, new_val, i, j);
+                }
+            }
+
+            if(board[0].size() == 1){
+                break;
+            }
+        }
+
+        for(int j = 0; j < board.size(); j += board.size() - 1){
+            for(int i = 0; i < board[0].size(); i++){
+                if(board[j][i] == og_val){
+                    change_region(board, og_val, new_val, i, j);
+                }
+            }
+
+            if(board.size() == 1){
+                break;
             }
         }
     }
 
-private:
-    
-    bool check_0(vector<vector<char>>& board, int i, int j){
+    void inner_region_capture(vector<vector<char>>& board){
         
-        if(board[j][i] != 'X' && board[j][i] != '1'){
-
-            if(j == 0 || i == 0 || j == board.size() - 1 || i == board[j].size() - 1){
-                
-                return false;
-            }
-
-            //at 0 -> change to 1 -> show it is visited
-            board[j][i] = '1';
-
-            bool out = true, tmp;
-
-            //check other elements in all other directions
-            if(j > 0){
-                tmp = check_0(board, i, j - 1);
-                if(out){
-                    out = tmp;
+        for(int j = 1; j < board.size() - 1; j++){
+            for(int i = 1; i < board[0].size() - 1; i++){
+                if(board[j][i] == 'O'){
+                    change_region(board, 'O', 'X', i, j);
                 }
             }
-            if(i > 0){
-                tmp = check_0(board, i - 1, j);
-                if(out){
-                    out = tmp;
-                }
-            }
-            if(i < board[j].size() - 1){
-                tmp = check_0(board, i + 1, j);
-                if(out){
-                    out = tmp;
-                }
-            }
-            if(j < board.size()){
-                tmp = check_0(board, i, j + 1);
-                if(out){
-                    out = tmp;
-                }
-            }
-
-            if(out){
-                board[j][i] = 'X';
-            }
-            else{
-                board[j][i] = 'O';
-            }
-
-            return out;
-
         }
-
-        return true;
-
     }
 };
 
 int main(){
     Solution s1;
-    vector<vector<char>> board{
-        {'X','X','X','X'},
-        {'X','O','O','X'},
-        {'X','X','O','X'},
-        {'X','O','X','X'}
+
+    vector<vector<char>> input {
+        {'X'}
     };
 
-    s1.solve(board);
+    s1.solve(input);
 
-    for(int j = 0; j < board.size(); j++){
-        for(int i = 0; i < board[j].size(); i++){
-            cout << board[j][i] << " ";
+    
+    for(int j = 0; j < input.size(); j++){
+
+        for(int i = 0; i < input[0].size(); i++){
+            cout << input[j][i] << " ";
         }
+
         cout << endl;
     }
-
 }
