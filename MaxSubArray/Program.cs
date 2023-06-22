@@ -1,23 +1,22 @@
-﻿namespace MaxSubArray{
+﻿using System.Collections.Generic;
+namespace MaxSubArray{
     class Program{
         public static void Main(string[] args){
-            Console.WriteLine(MaxSubArray(new int[]{1}));
+            Console.WriteLine(MaxSubArray(new int[]{-2,1,-3,4,-1,2,1,-5,4}));
         }
 
         public static int MaxSubArray(int[] nums) {
-            int max = nums[0], tmp;
+            int max = int.MinValue;
+            List<int> grouped = new List<int>();
 
+            bool prev_neg = !(nums[0] < 0);
             for(int i = 0; i < nums.Length; i++){
-
-                tmp = 0;
-
-                for(int j = i; j < nums.Length; j++){
-                    tmp += nums[j];
-                    if(tmp > max){
-                        max = tmp;
-                    }
+                if((prev_neg && nums[i] > 0) || (!prev_neg && nums[i] < 0)){
+                    grouped.Add(nums[i]);
                 }
-
+                else{
+                    grouped[grouped.Count - 1] += nums[i];
+                }
             }
 
             return max;
