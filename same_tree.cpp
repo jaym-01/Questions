@@ -25,7 +25,7 @@ public:
             return false;
         }
         else{
-            if(!isSameTree(p->left, q->left) || !isSameTree(p->left, q->right)){
+            if(!isSameTree(p->left, q->left) || !isSameTree(p->right, q->right)){
                 return false;
             }
         }
@@ -35,7 +35,9 @@ public:
 };
 
 TreeNode* createTree(){
-    return new TreeNode(1, new TreeNode(2, NULL, NULL), new TreeNode(3, NULL, NULL));
+    
+    TreeNode* test = new TreeNode(1, new TreeNode(2, NULL, NULL), new TreeNode(3, NULL, NULL));
+    return test;
 }
 
 int main(){
