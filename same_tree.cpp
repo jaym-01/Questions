@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -34,14 +35,31 @@ public:
     }
 };
 
-TreeNode* createTree(){
+TreeNode* createTree(vector<int> in_nodes){
+
+    TreeNode* root, *tmp;
+    queue<TreeNode*> nodes;
+
+    root = new TreeNode(in_nodes[0]);
+    nodes.push(root);
     
-    TreeNode* test = new TreeNode(1, new TreeNode(2, NULL, NULL), new TreeNode(3, NULL, NULL));
-    return test;
+    for(int i = 1; i < in_nodes.size(); i += 2){
+        tmp = nodes.front();
+        nodes.pop();
+
+        tmp->left = new TreeNode(in_nodes[i]);
+        tmp->right = new TreeNode(in_nodes[i+1]);
+
+        nodes.push(tmp->left);
+        nodes.push(tmp->right);
+    }
+
+    return root;
 }
 
 int main(){
-    Solution s1;
+    
+    TreeNode* test = createTree({1, 2, 3, 4, 5, 6, 7});
 
-    cout << s1.isSameTree(createTree(), createTree()) << endl;
+    return 0;
 }
