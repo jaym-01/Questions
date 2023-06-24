@@ -6,16 +6,25 @@ namespace MaxSubArray{
         }
 
         public static int MaxSubArray(int[] nums) {
-            int max = int.MinValue;
-            List<int> grouped = new List<int>();
+            int max = nums[0];
+            int[] mem = new int[nums.Length];
 
-            bool prev_neg = !(nums[0] < 0);
             for(int i = 0; i < nums.Length; i++){
-                if((prev_neg && nums[i] > 0) || (!prev_neg && nums[i] < 0)){
-                    grouped.Add(nums[i]);
+                if(nums[i] > max){
+                    max = nums[i];
                 }
-                else{
-                    grouped[grouped.Count - 1] += nums[i];
+                mem[0] = nums[i];
+                for(int j = i+1; j < mem.Length; j++){
+                    if(i == 0){
+                        mem[j] = mem[j - 1] + nums[j];
+                    }
+                    else{
+                        mem[j] -= nums[i - 1];
+                    }
+
+                    if(mem[j] > max){
+                        max = mem[j];
+                    }
                 }
             }
 
