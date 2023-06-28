@@ -13,7 +13,6 @@ public:
         }
 
         int total = 0, tmp;
-        bool first = true;
         
         stack<int> operands;
 
@@ -25,19 +24,15 @@ public:
                 operands.push(tmp); 
             }
             catch(exception e){
-                //it is an operator
+                //it is an operator -> perform the operation
 
-                // must take the top 2 off the stack
-                if(first){
-                    total = operands.top();
-                    operands.pop();
-
-                    first = false;
-                }
-                
-                total = getTotal(operands.top(), total, tokens[i]);
-                
+                tmp = operands.top();
                 operands.pop();
+
+                total = getTotal(operands.top(), tmp, tokens[i]);
+                operands.pop();
+
+                operands.push(total);
             }
         }
 
@@ -67,5 +62,5 @@ int main(){
 
     vector<string> test {"3","11","+","5","-"};
     vector<string> test1 {"4","13","5","/","+"};
-    cout << s1.evalRPN(test) << endl;
+    cout << s1.evalRPN(test1) << endl;
 }
