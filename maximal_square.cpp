@@ -64,9 +64,12 @@ private:
 
         --y;
 
-        for(; x > j - size + 1; --x){
+        for(; x > j - size + 1 && x >= 0; --x){
             if(matrix[y][x] == '0'){
                 return false;
+            }
+            if(x < -1){
+                cout << "x: " << x << "\ny:" << y << endl;
             }
         }
 
@@ -77,7 +80,7 @@ private:
 int main(){
     Solution s1;
 
-    vector<vector<char>> test1 {{'1', '1'}, {'1', '1'}};
+    vector<vector<char>> test1 {{'1','1','1','1','0'},{'1','1','1','1','0'},{'1','1','1','1','1'},{'1','1','1','1','1'},{'0','0','1','1','1'}};
 
     cout << s1.maximalSquare(test1) << endl;
 }
