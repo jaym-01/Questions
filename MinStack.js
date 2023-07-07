@@ -40,7 +40,7 @@ MinStack.prototype.top = function() {
  * @return {number}
  */
 MinStack.prototype.getMin = function() {
-    return Math.min(this.content);
+    return Math.min.apply(null, this.content.slice(0, this.top_val + 1));
 };
 
 /** 
@@ -60,4 +60,4 @@ console.log(obj.top());
 console.log(obj.pop());
 console.log(obj.top());
 console.log(obj.push(8));
-console.log(obj.MinStack);
+console.log(obj.getMin());
