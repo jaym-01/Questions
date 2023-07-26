@@ -11,17 +11,17 @@ public:
 
         for(int i = 0; i < p.size(); i++){
 
+            if(s_idx >= s.size()){
+                return false;
+            }
+
             if(i != p.size() - 1 && p[i+1] == '*'){
 
-                if(p.size() - i == 2){
+                if(p.size() - i == 2 && p[i] == '.'){
                     return true;
                 }
 
-                bool first = true;
-
-                while(s_idx < s.size() && (p[i] != '.' && (s[s_idx] == p[i] || first) || p[i] == '.')){
-
-                    first = false;
+                while(s_idx < s.size() && (p[i] != '.' && s[s_idx] == p[i] || p[i] == '.')){
 
                     if(!isMatch(s.substr(s_idx, s.size() - s_idx), p.substr(i + 2, p.size() - i + 2))){
                         s_idx++;
@@ -30,7 +30,8 @@ public:
                         return true;
                     }
                 }
-
+                
+                --s_idx;
                 i++;
             }
             else if(p[i] != '.'){
@@ -42,7 +43,7 @@ public:
             s_idx++;
         }
 
-        if(s_idx != s.size()){
+        if(s_idx < s.size()){
             return false;
         }
 
@@ -53,8 +54,8 @@ public:
 int main(){
     Solution sol;
     
-    string s1 = "aaaaaaaaaa";
-    string p1 = "a*a";
+    string s1 = "aa";
+    string p1 = "a";
 
     cout << sol.isMatch(s1, p1) << endl;
 
