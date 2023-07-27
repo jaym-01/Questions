@@ -11,10 +11,6 @@ public:
 
         for(int i = 0; i < p.size(); i++){
 
-            if(s_idx >= s.size()){
-                return false;
-            }
-
             if(i != p.size() - 1 && p[i+1] == '*'){
 
                 if(p.size() - i == 2 && p[i] == '.'){
@@ -39,6 +35,11 @@ public:
                     return false;
                 }
             }
+            else{
+                if(s_idx >= s.size()){
+                    return false;
+                }
+            }
 
             s_idx++;
         }
@@ -55,7 +56,7 @@ int main(){
     Solution sol;
     
     string s1 = "aa";
-    string p1 = "a";
+    string p1 = "aa.*";
 
     cout << sol.isMatch(s1, p1) << endl;
 
