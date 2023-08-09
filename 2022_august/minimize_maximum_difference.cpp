@@ -3,134 +3,50 @@
 #include <cstdlib>
 #include <limits>
 #include <map>
+#include <algorithm>
+
 
 using namespace std;
-
-// class Solution
-// {
-// public:
-//     int minimizeMax(vector<int> &nums, int p)
-//     {
-//         if (p == 0)
-//         {
-//             return 0;
-//         }
-
-//         vector<int> diffs;
-//         int crnt_min, crnt_val, tmp, j;
-//         map<int, int> used; // other index used, minimum value
-
-//         for (int i = 0; i < nums.size() - 1; i++)
-//         {
-//             crnt_val = nums[i];
-//             crnt_min = numeric_limits<int>::max();
-
-//             for (j = i + 1; j < nums.size(); j++)
-//             {
-//                 tmp = abs(nums[j] - crnt_val);
-//                 if (crnt_min > tmp)
-//                 {
-//                     if (used.contains(i))
-//                     {
-//                         if (used[i] > tmp)
-//                         {
-//                             remove_v(diffs, used[i]);
-//                             crnt_min = tmp;
-//                             used[i] = tmp;
-//                         }
-//                     }
-//                     else if (used.contains(j))
-//                     {
-//                         if (used[j] > tmp)
-//                         {
-//                             remove_v(diffs, used[j]);
-//                             crnt_min = tmp;
-//                             used[j] = tmp;
-//                         }
-//                     }
-//                     else
-//                     {
-//                         crnt_min = tmp;
-//                     }
-//                 }
-//             }
-
-//             if (crnt_min == numeric_limits<int>::max())
-//             {
-//                 diffs.push_back(crnt_min);
-//                 j = diffs.size() - 1;
-
-//                 while (j > 0 && diffs[j - 1] > crnt_min)
-//                 {
-//                     diffs[j] = diffs[j - 1];
-//                     --j;
-//                 }
-
-//                 diffs[j] = crnt_min;
-//                 used[i] = crnt_min;
-//             }
-//         }
-
-//         return diffs[p - 1];
-//     }
-
-//     void remove_v(vector<int>& nums, int val){
-//         for(int i = 0; i < nums.size(); i++){
-//             if(nums[i] == val){
-//                 nums.erase(nums.begin() + i);
-//                 return;
-//             }
-//         }
-//     }
-// };
 
 class Solution
 {
 public:
     int minimizeMax(vector<int> &nums, int p)
     {
-        if(p == 0){
-            return 0;
-        }
-        vector<int> diffs;
-        int crnt_min, crnt_val, tmp, j;
-        int* used = new int[nums.size()];
+        sort(nums.begin(), nums.end());
 
-        for (int i = 0; i < nums.size() - 1; i++)
-        {
-            crnt_val = nums[i];
-            crnt_min = numeric_limits<int>::max();
+        int thresh = 0, pairs = 0, left = 0, right = nums[nums.size() - 1] - nums[0];
 
-            for (j = i + 1; j < nums.size(); j++)
-            {
-                tmp = abs(nums[j] - crnt_val);
-                if (crnt_min > tmp)
-                {
-                    crnt_min = tmp;
+        while(left < right){
+            pairs = 0;
+
+            thresh = left + (right - left) / 2;
+
+            for(int i = 0; i < nums.size() - 1; i++){
+                if(abs(nums[i+1] - nums[i]) <= thresh){
+                    pairs++;
+                    i++;
                 }
             }
-
-            diffs.push_back(crnt_min);
-            j = diffs.size() - 1;
-
-            while (j > 0 && diffs[j - 1] > crnt_min)
-            {
-                diffs[j] = diffs[j - 1];
-                --j;
+            
+            if(pairs >= p){
+                right = thresh;
             }
-
-            diffs[j] = crnt_min;
+            else{
+                left = thresh + 1;
+            }
         }
 
-        return diffs[p - 1];
+        return left;
     }
+
 };
 
 int main()
 {
     Solution s;
 
-    vector<int> t1{3,4,2,3,2,1,2};
+    vector<int> t1{4,2,1,2};
 
-    cout << s.minimizeMax(t1, 3) << endl;
+    cout << s.minimizeMax(t1, 1) << endl;
 }
