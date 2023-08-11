@@ -9,7 +9,7 @@ class Solution {
 public:
     bool search(vector<int>& nums, int target) {
         // find pivot
-        int lowest = find_pivot(nums);
+        int lowest = find_pivot(nums, 0, n - 1, true);
 
         if(target >= nums[lowest] && target <= nums[n - 1]){
             return binary_search(nums, lowest, n - 1, target);
@@ -23,31 +23,28 @@ public:
     }
 
 // private:
-    int find_pivot(vector<int>& nums){
-        int ref = nums[n - 1], low = 0, high = n - 1, mid;
+    int find_pivot(vector<int>& nums, int low, int high, bool first){
+        int ref = nums[n - 1], mid;
 
         while(low < high){
             mid = (low + high) / 2;
 
             if(nums[mid] == ref){
+                int p_l = find_pivot(nums, low, mid, false);
+                int p_r = find_pivot(nums, mid + 1, high, false);
 
-                int j = mid - 1;
-
-                while(j != mid){
-                    if(nums[j] == ref){
-                        if(j == low){
-                            j = high - 1;
-                        }
-                        else{
-                            --j;
-                        }
-                    }
-                    else{
-                        break;
-                    }
+                if(p_l > low && nums[p_l - 1] > nums[p_l]){
+                    return p_l;
                 }
-
-                low = j + 1;
+                else if(p_r > low && nums[p_r - 1] > nums[p_r]){
+                    return p_r;
+                }
+                else if(p_l <= low && nums[high] >= nums[p_l]){
+                    return p_l;
+                }
+                else{
+                    return p_r;
+                }
             }
             else if(nums[mid] > ref){
                 low = mid + 1;
@@ -83,10 +80,10 @@ public:
 
 int main(){
     Solution s;
-    vector<int> t1 {1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1};
+    vector<int> t1 {2,5,6,0,0,1,2};
 
     // cout << s.search(t1, 10) << endl;
 
-    cout << s.find_pivot(t1) << endl;
+    cout << s.find_pivot(t1, 0, t1.size() - 1, true) << endl;
     // cout << s.binary_search(t1, 0, t1.size() - 1, 1) << endl;
 }
