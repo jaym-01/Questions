@@ -1,23 +1,37 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <deque>
 
 using namespace std;
 
 class Solution {
 public:
     vector<int> maxSlidingWindow(vector<int>& nums, int k) {
-        int end = k, max;
+        int end = k;
         vector<int> out;
+        deque<int> q;
 
-        sort(nums.begin(), nums.begin() + k);
+        for(int i = 0; i < k; i++){
+            while(q.size() > 0 && nums[i] >= nums[q.back()]){
+                q.pop_back();
+            }
+            q.push_back(i);
+        }
 
-        max = nums[k - 1];
-        out.push_back(max);
+        end++;
+        out.push_back(nums[q.front()]);
 
-        while(end < nums.size()){
-            if(nums[end] > max) max = nums[end];
-            out.push_back(max);
+        while(end <= nums.size()){
+            if(end-k > q.front()){
+                q.pop_front();
+            }
+            while(q.size() > 0 && nums[end - 1] >= nums[q.back()]){
+                q.pop_back();
+            }
+
+            q.push_back(end - 1);
+            out.push_back(nums[q.front()]);
             end++;
         }
 
@@ -27,9 +41,9 @@ public:
 
 int main(){
     Solution s;
-    vector<int> t1 {1, -1};
+    vector<int> t1 {7,2,4};
 
-    vector<int> out1 = s.maxSlidingWindow(t1, 3);
+    vector<int> out1 = s.maxSlidingWindow(t1, 2);
 
     for(int i = 0; i < out1.size(); i++){
         cout << out1[i] << ", ";
