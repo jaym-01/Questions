@@ -1,64 +1,62 @@
 #include <iostream>
 #include <vector>
+#include <queue> 
 
 using namespace std;
 
 class Solution {
 public:
     vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
-        vector<vector<int>> out = vector<vector<int>>(mat.size(), vector<int>(mat[0].size(), -1));
+
+        queue<int*> next;
 
         for(int j = 0; j < mat.size(); j++){
             for(int i = 0; i < mat[0].size(); i++){
-                if(out[j][i] == -1){
-                    shortest_path(mat, i, j, out);
+                if(mat[j][i] == 0){
+                    next.push(new int[3]{i, j, 0});
+                }
+                else{
+                    mat[j][i] = INT_MAX;
                 }
             }
         }
 
-        return out;
+        while(!next.empty()){
+            fill(next.front()[0], next.front()[1], next.front()[2], mat, next);
+            next.pop();
+        }
+
+        return mat;
     }
 
-    int shortest_path(vector<vector<int>>& matrix, int x, int y, vector<vector<int>>& out){
-        if(x < 0 || y < 0 || x >= matrix[0].size() || y >= matrix.size()){
-            return INT_MAX - 2;
+    void fill(int x, int y, int d, vector<vector<int>>& mat, queue<int*>& next){
+        // check left, right, up and down -> if it changes - push to queue
+        d++;
+        // right
+        if(x + 1 < mat[0].size() && mat[y][x + 1] > d){
+            mat[y][x+1] = d;
+            next.push(new int[3]{x+1, y, d});
         }
-        else if (out[y][x] != -1){
-            return out[y][x];
+
+        // down
+        if(y + 1 < mat.size() && mat[y + 1][x] > d){
+            mat[y+1][x] = d;
+            next.push(new int[3]{x, y+1, d});
         }
-        else if(matrix[y][x] == 0){
-            out[y][x] = 0;
-            return 0;
+
+        // left
+        if(x - 1 > -1 && mat[y][x - 1] > d){
+            mat[y][x-1] = d;
+            next.push(new int[3]{x-1, y, d});
         }
-        else if(matrix[y][x] == -1){
-            return INT_MAX - 2;
-        }
-        else{
-            int og = matrix[y][x]; 
-            matrix[y][x] = -1;
 
-            int right = shortest_path(matrix, x + 1, y, out) + 1;
-            int down = shortest_path(matrix, x, y + 1, out) + 1;
-            int left = shortest_path(matrix, x - 1, y, out) + 1;
-            int up = shortest_path(matrix, x, y - 1, out) + 1;
-
-            int min, tmp;
-
-            if(up < down) min = up;
-            else min = down;
-
-            if(left < right) tmp = left;
-            else tmp = right;
-
-            if(tmp < min) min = tmp;
-
-            if(min == INT_MAX - 1) out[y][x] = -1;
-            else out[y][x] = min;
-            
-            matrix[y][x] = og;
-            return min;
+        // up
+        if(y - 1 > -1 && mat[y - 1][x] > d){
+            mat[y-1][x] = d;
+            next.push(new int[3]{x, y-1, d});
         }
     }
+    
 };
 
 int main(){
