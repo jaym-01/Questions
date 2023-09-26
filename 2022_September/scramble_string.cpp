@@ -5,58 +5,54 @@
 
 using namespace std;
 
+class data_struct{
+public:
+    string s;
+    int start;
+    int end;
+
+    data_struct(string s_i, int start_i, int end_i): s(s_i), start(start_i), end(end_i) {}
+};
+
 class Solution {
 public:
     bool isScramble(string s1, string s2) {
         if(s1 == s2) return true;
 
-        map<string, vector<string>> mem;
-
-        vector<string> combos = scrambleCombos(s1, mem);
-
-        for(string s: combos){
-            if(s2 == s) return true;
-        }
-
-        return false;
+        map<data_struct, bool> mem;
+        return solve(s1, s2, 0, s2.size() - 1, mem);
     }
 
 private:
-    vector<string> scrambleCombos(string s, map<string, vector<string>>& mem){
-        if(s.size() == 1) return vector<string>{s};
-        else if (mem.contains(s)) {
-            return mem[s];
+    bool solve(string s, string s2, int start, int end, map<data_struct, bool>& mem){
+        if(mem.contains(data_struct(s, start, end))) {
+            return mem[data_struct(s, start, end)];
         }
+        else if(s.size() == 1 && s2[start] == s[0]) return true;
+        else if(s.size() == 1) return false;
         else{
-            string x, y;
-            vector<string> x_combos, y_combos, out;
-            int tmp_max;
+            string left, right;
 
             for(int i = 0; i < s.size() - 1; i++){
-                x = s.substr(0, i+1);
-                y = s.substr(i+1, s.size() - i - 1);
+                left = s.substr(0, i+1);
+                right = s.substr(i + 1, s.size() - i - 1);
 
-                x_combos = scrambleCombos(x, mem);
-                y_combos = scrambleCombos(y, mem);
+                mem[data_struct(left, start, i)] = solve(left, s2, start, i, mem);
+                mem[data_struct(right, i + 1, end)] = solve(right, s2, i + 1, end, mem);
 
-                for(int j = 0; j < x_combos.size(); j++){
-                    for(int k = 0; k < y_combos.size(); k++){
-                        out.push_back(x_combos[j] + y_combos[k]);
-                        out.push_back(y_combos[k] + x_combos[j]);
-                    }
-                }
+                mem[data_struct(right, start, start + right.size() - 1)] = solve(right, s2, start, start + right.size() - 1, mem);
+                mem[data_struct(left, end - left.size() + 1, end)] = solve(left, s2, end - left.size() + 1, end, mem);
+
+                if(mem[data_struct(left, start, i)] && mem[data_struct(right, i + 1, end)]) return true;
+                else if(mem[data_struct(right, start, start + right.size() - 1)] && mem[data_struct(left, end - left.size() + 1, end)]) return true;
             }
 
-            for(string out_val: out){
-                mem[out_val] = out;
-            }
-
-            return out;
+            return false;
         }
     }
 };
 
 int main(){
     Solution s;
-    cout << s.isScramble("great", "rgeat") << endl;
+    cout << s.isScramble("qwertyuiopasdfghjklzxcvbnm", "asdfghjklzxcvbnmqwertyuiop") << endl;
 }
