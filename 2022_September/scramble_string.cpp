@@ -1,50 +1,31 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <map>
 
 using namespace std;
-
-class data_struct{
-public:
-    string s;
-    int start;
-    int end;
-
-    data_struct(string s_i, int start_i, int end_i): s(s_i), start(start_i), end(end_i) {}
-};
 
 class Solution {
 public:
     bool isScramble(string s1, string s2) {
         if(s1 == s2) return true;
+        auto mem = vector<vector<vector<int>>>(s1.size(), vector<vector<int>>(s1.size(), vector<int>(s1.size() + 1, -1)));
 
-        map<data_struct, bool> mem;
-        return solve(s1, s2, 0, s2.size() - 1, mem);
+        return solve(s1, s2, 0, 0, s1.size(), mem);
     }
 
 private:
-    bool solve(string s, string s2, int start, int end, map<data_struct, bool>& mem){
-        if(mem.contains(data_struct(s, start, end))) {
-            return mem[data_struct(s, start, end)];
-        }
-        else if(s.size() == 1 && s2[start] == s[0]) return true;
-        else if(s.size() == 1) return false;
+    bool solve(string& s1, string& s2, int i, int j, int len, vector<vector<vector<int>>>& mem){
+        if(len == 1) return mem[i][j][len] = s1[i] == s2[j];
+        else if(mem[i][j][len] != -1) return mem[i][j][len];
         else{
-            string left, right;
+            for(int k = 1; k < len; k++){
+                mem[i][j][k] = solve(s1, s2, i, j, k, mem);
+                mem[i + k][j + k][len - k] = solve(s1, s2, i + k, j + k, len - k, mem);
 
-            for(int i = 0; i < s.size() - 1; i++){
-                left = s.substr(0, i+1);
-                right = s.substr(i + 1, s.size() - i - 1);
+                mem[i][j + len - k][k] = solve(s1, s2, i, j + len - k, k, mem);
+                mem[i + k][j][len - k] = solve(s1, s2, i + k, j, len - k, mem);
 
-                mem[data_struct(left, start, i)] = solve(left, s2, start, i, mem);
-                mem[data_struct(right, i + 1, end)] = solve(right, s2, i + 1, end, mem);
-
-                mem[data_struct(right, start, start + right.size() - 1)] = solve(right, s2, start, start + right.size() - 1, mem);
-                mem[data_struct(left, end - left.size() + 1, end)] = solve(left, s2, end - left.size() + 1, end, mem);
-
-                if(mem[data_struct(left, start, i)] && mem[data_struct(right, i + 1, end)]) return true;
-                else if(mem[data_struct(right, start, start + right.size() - 1)] && mem[data_struct(left, end - left.size() + 1, end)]) return true;
+                if(mem[i][j][k] && mem[i+k][j+k][len-k] || mem[i][j+len-k][k] && mem[i+k][j][len-k]) return true;
             }
 
             return false;
@@ -54,5 +35,5 @@ private:
 
 int main(){
     Solution s;
-    cout << s.isScramble("qwertyuiopasdfghjklzxcvbnm", "asdfghjklzxcvbnmqwertyuiop") << endl;
+    cout << s.isScramble("abcde", "caebd") << endl;
 }
