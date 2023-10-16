@@ -8,8 +8,8 @@ private:
     int bsPos(const vector<int>& nums, vector<int>& idx_qu, int i){
         int start = 0, end = idx_qu.size() - 1, mid;
 
-        while(start < end){
-            mid = (start + end) / 2;
+        while(start <= end){
+            mid = (start + end + 1) / 2;
 
             if(nums[i] >= nums[idx_qu[mid]]){
                 end = mid - 1;
@@ -23,6 +23,15 @@ private:
     }
 
     void addQueue(const vector<int>& nums, vector<int>& idx_qu, int i){
+        if(idx_qu.empty()){
+            idx_qu.push_back(i);
+            return;
+        }
+        else if(nums[idx_qu.back()] > nums[i]){
+            idx_qu.push_back(i);
+            return;
+        }
+
         int j = bsPos(nums, idx_qu, i);
 
         idx_qu.erase(idx_qu.begin() + j, idx_qu.end());
@@ -56,9 +65,9 @@ public:
 int main(){
     Solution s;
 
-    vector<int> t1 {9,10,9,-7,-4,-8,2,-6};
+    vector<int> t1 {1};
 
-    vector<int> out = s.maxSlidingWindow(t1, 5);
+    vector<int> out = s.maxSlidingWindow(t1, 1);
 
     for(int val: out){
         cout << val << ", ";
