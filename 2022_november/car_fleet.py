@@ -26,13 +26,13 @@ class Solution:
 
         while len(pos_spd) > 0:
             pos, spd = pos_spd.pop()
-            if merge_pos != -1 and spd <= prev_spd:
+            if merge_pos == -1 and spd <= prev_spd:
                 fleets += 1
                 merge_pos, merge_spd = -1, -1
             else:
-                tmp_pos = self.findPosMeet(prev_pos, prev_spd, pos, spd)
+                tmp_pos = -1 if prev_spd == spd else self.findPosMeet(prev_pos, prev_spd, pos, spd)
 
-                if merge_pos == -1:
+                if tmp_pos != -1 and merge_pos == -1:
                     if tmp_pos <= target:
                         # they've met
                         merge_pos = tmp_pos
@@ -41,12 +41,13 @@ class Solution:
                         fleets += 1
                         merge_pos, merge_spd = -1, -1
                 else:
-                    if tmp_pos <= merge_pos:
+                    if tmp_pos != -1 and tmp_pos <= merge_pos:
                         # they've met
                         merge_pos = tmp_pos
                         merge_spd = prev_spd
                     else:
                         # verify if they meet after
+                        # if(merge)
                         newD = self.getNewD(merge_pos, prev_pos, prev_spd, pos, spd)
                         tmp_pos = self.findPosMeet(merge_pos, merge_spd, newD, spd)
 
@@ -67,4 +68,4 @@ class Solution:
 
 s = Solution()
 
-print(s.carFleet(10, [0,4,2], [2,1,3]))
+print(s.carFleet(12, [10,8,0,5,3], [2,4,1,1,3]))
